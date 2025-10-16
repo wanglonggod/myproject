@@ -3,7 +3,7 @@ name: Auto Deploy to Server
 on:
   push:
     branches:
-      - main  # 推送到 main 分支时触发部署
+      - master  # 推送到 main 分支时触发部署
 
 jobs:
   deploy:
