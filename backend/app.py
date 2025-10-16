@@ -13,6 +13,7 @@ handler.setLevel(logging.ERROR)
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(name)s: %(message)s')
 handler.setFormatter(formatter)
 app.logger.addHandler(handler)
+# CI/CD trigger test
 
 @app.route("/health")
 def health():
