@@ -1,0 +1,15 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>Demo</title></head>
+<body>
+  <h1>后端 + MySQL 示例页面</h1>
+  <div id="users">加载中…</div>
+  <script>
+    fetch('/api/users').then(r=>r.json()).then(j=>{
+      if (j.users) {
+        document.getElementById('users').innerHTML = '<ul>' + j.users.map(u => '<li>'+u.name+'</li>').join('') + '</ul>';
+      } else document.getElementById('users').innerText = JSON.stringify(j);
+    });
+  </script>
+</body>
+</html>

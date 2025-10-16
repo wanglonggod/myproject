@@ -1,0 +1,53 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: mydb
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./backend/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql:ro
+    networks:
+      - mynet
+
+  backend:
+    build: ./backend
+    container_name: backend
+    restart: unless-stopped
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_USER: root
+      MYSQL_PASSWORD: example
+      MYSQL_DATABASE: mydb
+    depends_on:
+      - mysql
+    volumes:
+      - ./logs:/var/log/myapp     # 宿主机 logs 目录可见日志
+    networks:
+      - mynet
+
+  nginx:
+    image: nginx:1.25
+    container_name: nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./backend/static:/usr/share/nginx/html:ro
+    networks:
+      - mynet
+
+volumes:
+  mysql_data:
+  # logs 是宿主机绑定，不用定义为 docker volume
+
+networks:
+  mynet:
+    driver: bridge

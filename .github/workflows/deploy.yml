@@ -1,0 +1,29 @@
+name: Auto Deploy to Server
+
+on:
+  push:
+    branches:
+      - main  # 推送到 main 分支时触发部署
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: Deploy to Server
+      run: |
+        ssh -o StrictHostKeyChecking=no wanglong@192.168.184.128 << 'EOF'
+        cd ~/myproject
+        git pull origin main
+        docker-compose pull
+        docker-compose up -d --build
+        docker image prune -f
+        EOF
